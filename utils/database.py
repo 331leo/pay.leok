@@ -23,6 +23,10 @@ async def get_order_data(data):
     return await mongodb_client.orders.find_one(data)
 
 
+async def delete_order_data(data):
+    return await mongodb_client.orders.delete_one(data)
+
+
 async def insert_paid_data(data):
     return await mongodb_client.orders_completed.insert_one(data)
 

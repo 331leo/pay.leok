@@ -10,6 +10,7 @@ from utils.database import (
     get_paid_data,
     insert_paid_data,
     create_index,
+    delete_order_data,
 )
 
 router = APIRouter()
@@ -41,6 +42,7 @@ async def route_paycallback(
             if json.get("status", None) == "DONE":
                 json.update(order_data)
                 inserted_id = str((await insert_paid_data(json)).inserted_id)
+                await delete_order_data({"orderId": orderId})
                 return RedirectResponse(f"/paid?code={inserted_id}")
             else:
                 return {
