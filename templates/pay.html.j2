@@ -1,15 +1,78 @@
 {% extends "base.html.j2" %}
 
+{% block title %}결제하기{% endblock title %}
+
 {% block head %}
 <script src="https://js.tosspayments.com/v1"></script>
 {% endblock head %}
 
-{% block body %} {% endblock body %} 
+{% block body %}
+<style>
+@font-face {
+    font-family: 'BMJUA';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_one@1.0/BMJUA.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+body{
+    font-family: 'BMJUA';
+}
+.my-validation-message::before {
+  display: none;
+}
 
-{% block scripts %}
+.my-validation-message i {
+  margin: 0 .4em;
+  color: #f27474;
+  font-size: 1.4em;
+}
+</style>
+{% endblock body %} 
+
+{% block script %}
 <script>
-{% if  ordernum %}
-    var orderId = {{orderId}}
+{% if  orderId %}
+var orderId = "{{orderId}}"
+{% else %}
+function input_orderId(){
+  swal({
+  title: "주문번호를 입력해주세요.",
+  icon: "info",
+  buttons: { confirm: "다음" },
+  content:{
+    element: "input",
+    attributes: {
+      placeholder: "L-210821022",
+      type: "text",
+    }
+  },
+  closeOnClickOutside: false,
+  closeOnEsc: false,
+}).then((input) => {
+  if (!input){
+    swal({
+    title: "주문번호를 입력하세요",
+    icon: "error",
+    closeOnClickOutside: false,
+    closeOnEsc: false
+    }).then(function(ok){input_orderId()})
+    return
+  }
+  $.post("/api/FindOrderData",{"orderId":input},function(data){
+  console.log(data)
+  if (!data.price){
+    swal({
+    title: "올바르지 않은 주문번호 입니다.",
+    icon: "error",
+    closeOnClickOutside: false,
+    closeOnEsc: false
+    }).then(function(ok){input_orderId();})
+
+  }}
+  )
+});
+};
+input_orderId()
 {% endif %}
 var data = {
   price: 5400,
@@ -20,7 +83,7 @@ var data = {
 }
 </script> 
 
-<script>
+<!--script>
   var clientKey = "{{toss_ck}}";
   var tossPayments = TossPayments(clientKey);
   tossPayments.requestPayment("카드", {
@@ -31,5 +94,5 @@ var data = {
     successUrl: window.location.origin + "/api/PayCallback",
     failUrl: window.location.origin + "/api/FailCallback",
   });
-</script>
-{% endblock scripts %}
+</script-->
+{% endblock script %}

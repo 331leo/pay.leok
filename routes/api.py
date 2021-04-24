@@ -1,9 +1,11 @@
 import os
 import aiohttp
 from typing import Optional
-from fastapi import APIRouter, Request
+from fastapi import APIRouter, Request, exceptions, status, Form
 from fastapi.responses import RedirectResponse, JSONResponse
 from base64 import b64encode
+
+from starlette.status import HTTP_404_NOT_FOUND
 from utils.database import (
     get_order_data,
     insert_order_data,
@@ -19,6 +21,16 @@ router = APIRouter()
 @router.on_event("startup")
 async def on_startup():
     await create_index()
+
+
+@router.post("/FindOrderData")
+async def route_findorderdata(orderId: str = Form("orderId")):
+    data = await get_order_data({"orderId": orderId})
+    if data:
+        data.pop("_id", None)
+        return data
+    else:
+        return {"message": "Not Found"}
 
 
 @router.get("/PayCallback")
@@ -43,7 +55,7 @@ async def route_paycallback(
                 json.update(order_data)
                 inserted_id = str((await insert_paid_data(json)).inserted_id)
                 await delete_order_data({"orderId": orderId})
-                return RedirectResponse(f"/paid?code={inserted_id}")
+                return RedirectResponse(f"/paid/{inserted_id}")
             else:
                 return {
                     "status": json.get("status"),
