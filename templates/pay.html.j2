@@ -9,11 +9,11 @@
 {% block scripts %}
 <script>
 {% if  ordernum %}
-    var ordernum = {{ordernum}}
+    var orderId = {{orderId}}
 {% endif %}
 var data = {
   price: 5400,
-  ordernum: "L-210425001",
+  orderId: "L-210425001",
   title: "Leo: Test Product",
   description: "총 비용: 50000₩\n- 도메인: 8000₩\n- 홈페이지 서버 이전: 10000₩\n- 공임비: 32000₩",
   customer: "LeoKim"
@@ -25,11 +25,11 @@ var data = {
   var tossPayments = TossPayments(clientKey);
   tossPayments.requestPayment("카드", {
     amount: data.price,
-    orderId: data.ordernum,
+    orderId: data.orderId,
     orderName: data.title,
     customerName: data.customer,
-    successUrl: window.location.origin + "/success",
-    failUrl: window.location.origin + "/fail",
+    successUrl: window.location.origin + "/api/PayCallback",
+    failUrl: window.location.origin + "/api/FailCallback",
   });
 </script>
 {% endblock scripts %}
