@@ -1,0 +1,6 @@
+fastapi[all]
+pydantic
+aiohttp
+uvicorn
+motor
+python-dotenv
