@@ -1,11 +1,11 @@
 import os
-from fastapi import FastAPI, Request, Depends
+from fastapi import FastAPI, Request, Depends, status
 from fastapi.exceptions import HTTPException
 from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from fastapi.security import HTTPBasic, HTTPBasicCredentials
-
+from bson import ObjectId
 from utils import database
 from routes import router_api
 
@@ -39,21 +39,32 @@ async def route_generate(
         and credentials.password == os.environ.get("PSTP-ADMIN-PASSWORD")
     ):
         raise HTTPException(
-            status_code=401,
+            status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Incorrect username or password",
             headers={"WWW-Authenticate": "Basic"},
         )
     return {"username": credentials.username, "password": credentials.password}
 
 
+@app.get("/paid/{objId}", response_class=HTMLResponse)
+async def route_paid(request: Request, objId: str):
+    try:
+        data = await database.get_paid_data({"_id": ObjectId(objId)})
+    except:
+        data = None
+    return templates.TemplateResponse(
+        "paid.html.j2", {"request": request, "data": data}
+    )
+
+
 @app.get("/pay/{orderId}", response_class=HTMLResponse)
-async def route_pay_with_ordernum(request: Request, ordernum):
+async def route_pay_with_ordernum(request: Request, orderId: str):
     return templates.TemplateResponse(
         "pay.html.j2",
         {
             "request": request,
             "toss_ck": os.environ.get("PSTP-TOSS-CLIENT"),
-            "orderId": ordernum,
+            "orderId": orderId,
         },
     )
 

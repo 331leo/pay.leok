@@ -5,3 +5,4 @@ uvicorn
 motor
 python-dotenv
 aiohttp
+python-multipart
