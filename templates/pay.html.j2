@@ -31,12 +31,38 @@ body{
 
 {% block script %}
 <script>
+  function tosspay(data){
+  var clientKey = "{{toss_ck}}";
+  var tossPayments = TossPayments(clientKey);
+  tossPayments.requestPayment("카드", {
+    amount: data.price,
+    orderId: data.orderId,
+    orderName: data.title,
+    customerName: data.customer,
+    successUrl: window.location.origin + "/api/PayCallback",
+    failUrl: window.location.origin + "/api/FailCallback",
+  });}
+</script>
+
+<script>
 {% if  orderId %}
 var orderId = "{{orderId}}"
+$.post("/api/FindOrderData",{"orderId":orderId},function(data){
+  console.log(data)
+  if (!data.price){
+    swal({
+    title: "올바르지 않은 주문번호 입니다",
+    icon: "error",
+    closeOnClickOutside: false,
+    closeOnEsc: false
+    }).then(function(ok){location.replace("/pay")})
+  }
+  tosspay(data)
+})
 {% else %}
 function input_orderId(){
   swal({
-  title: "주문번호를 입력해주세요.",
+  title: "주문번호를 입력해주세요",
   icon: "info",
   buttons: { confirm: "다음" },
   content:{
@@ -67,32 +93,14 @@ function input_orderId(){
     closeOnClickOutside: false,
     closeOnEsc: false
     }).then(function(ok){input_orderId();})
-
-  }}
+    return
+  }
+  tosspay(data)
+  }
   )
 });
 };
 input_orderId()
 {% endif %}
-var data = {
-  price: 5400,
-  orderId: "L-210425001",
-  title: "Leo: Test Product",
-  description: "총 비용: 50000₩\n- 도메인: 8000₩\n- 홈페이지 서버 이전: 10000₩\n- 공임비: 32000₩",
-  customer: "LeoKim"
-}
-</script> 
-
-<!--script>
-  var clientKey = "{{toss_ck}}";
-  var tossPayments = TossPayments(clientKey);
-  tossPayments.requestPayment("카드", {
-    amount: data.price,
-    orderId: data.orderId,
-    orderName: data.title,
-    customerName: data.customer,
-    successUrl: window.location.origin + "/api/PayCallback",
-    failUrl: window.location.origin + "/api/FailCallback",
-  });
-</script-->
+</script>
 {% endblock script %}

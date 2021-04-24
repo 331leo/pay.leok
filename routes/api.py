@@ -44,6 +44,7 @@ async def route_paycallback(
     )
     header = {"Authorization": toss_api_key, "Content-Type": "application/json"}
     data = {"orderId": orderId, "amount": amount}
+    assert order_data.get("price") == amount, "Price must be same between Toss and DB"
     async with aiohttp.ClientSession() as session:
         async with session.post(
             f"https://api.tosspayments.com/v1/payments/{paymentKey}",
