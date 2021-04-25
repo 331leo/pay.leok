@@ -1,8 +1,10 @@
 import os
 import aiohttp
 from typing import Optional
-from fastapi import APIRouter, Request, exceptions, status, Form
+from fastapi import APIRouter, Request, exceptions, status, Form, Depends, HTTPException
 from fastapi.responses import RedirectResponse, JSONResponse
+from fastapi.security import HTTPBasic, HTTPBasicCredentials
+
 from base64 import b64encode
 
 from starlette.status import HTTP_404_NOT_FOUND
@@ -17,10 +19,50 @@ from utils.database import (
 
 router = APIRouter()
 
+security = HTTPBasic()
+
 
 @router.on_event("startup")
 async def on_startup():
     await create_index()
+
+
+@router.post("/PlaceOrder")
+async def route_placeorder(
+    request: Request,
+    credentials: HTTPBasicCredentials = Depends(security),
+    orderId: str = Form("orderId"),
+    ordername: str = Form("ordername"),
+    description: str = Form("description"),
+    price: int = Form("price"),
+    customer: str = Form("customer"),
+):
+    if not (
+        credentials.username == "admin"
+        and credentials.password == os.environ.get("PSTP-ADMIN-PASSWORD")
+    ):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Incorrect username or password",
+            headers={"WWW-Authenticate": "Basic"},
+        )
+    try:
+        payload = {
+            "orderId": orderId,
+            "title": ordername,
+            "description": description,
+            "price": price,
+            "customer": customer,
+        }
+        await insert_order_data(payload)
+        payload.pop("_id", None)
+        return JSONResponse(
+            payload, 200, headers={"content-type": "text/html; charset=UTF-8"}
+        )
+    except Exception as e:
+        return JSONResponse(
+            {"error": f"{e}"}, 500, headers={"content-type": "text/html; charset=UTF-8"}
+        )
 
 
 @router.post("/FindOrderData")

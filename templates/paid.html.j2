@@ -2,19 +2,7 @@
 
 {% block title %}결제완료{% endblock title %}
 
-{% block body %}
-<style>
-@font-face {
-    font-family: 'BMJUA';
-    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_one@1.0/BMJUA.woff') format('woff');
-    font-weight: normal;
-    font-style: normal;
-}
-body{
-    font-family: 'BMJUA';
-}
-</style>
-{% endblock body %} 
+{% block style %} {% endblock style %} 
 
 {% block script %}
 <script>
@@ -22,7 +10,7 @@ const el = document.createElement('div')
 el.innerHTML = `<a href="{{data.get('card').get('receiptUrl')}}">영수증</a>`
 swal({
       title: "결제가 완료되었습니다!",
-      text: "{{data.title}}\n\n{{data.description}}\n\n감사합니다",
+      text: `{{data.title}}\n\n{{data.description}}\n\n감사합니다`,
       icon: "success",
       buttons: { confirm: "나가기" },
       closeOnClickOutside: false,

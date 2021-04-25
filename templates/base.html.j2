@@ -10,7 +10,19 @@
     />
     <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <style>
+    @font-face {
+        font-family: 'BMJUA';
+        src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_one@1.0/BMJUA.woff') format('woff');
+        font-weight: normal;
+        font-style: normal;
+    }
+    body{
+        font-family: 'BMJUA';
+    }
+    </style>
     {% block head %} {% endblock %}
+    {% block style %} {% endblock style %}
   </head>
   <body class="success" style="background-color: lightblue">
     {% block body %} {% endblock body %} 

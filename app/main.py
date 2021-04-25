@@ -43,7 +43,7 @@ async def route_generate(
             detail="Incorrect username or password",
             headers={"WWW-Authenticate": "Basic"},
         )
-    return {"username": credentials.username, "password": credentials.password}
+    return templates.TemplateResponse("generate.html.j2", {"request": request})
 
 
 @app.get("/paid/{objId}", response_class=HTMLResponse)

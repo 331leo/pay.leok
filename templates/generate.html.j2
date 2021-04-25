@@ -1,0 +1,212 @@
+{% extends "base.html.j2" %}
+
+{% block title %}주문 생성하기{% endblock title %}
+
+{% block head %} {% endblock head %}
+{% block style %}
+<style type="text/css">
+.form-style-7{
+	max-width:400px;
+	margin:50px auto;
+	background:#fff;
+	border-radius:2px;
+	padding:20px;
+}
+.form-style-7 h1{
+	display: block;
+	text-align: center;
+	padding: 0;
+	margin: 0px 0px 20px 0px;
+	color: #5C5C5C;
+	font-size:x-large;
+}
+.form-style-7 ul{
+	list-style:none;
+	padding:0;
+	margin:0;	
+}
+.form-style-7 li{
+	display: block;
+	padding: 9px;
+	border:1px solid #DDDDDD;
+	margin-bottom: 30px;
+	border-radius: 3px;
+}
+.form-style-7 li:last-child{
+	border:none;
+	margin-bottom: 0px;
+	text-align: center;
+}
+.form-style-7 li > label{
+	display: block;
+	float: left;
+	margin-top: -19px;
+	background: #FFFFFF;
+	height: 14px;
+	padding: 2px 5px 2px 5px;
+	color: #B9B9B9;
+	font-size: 14px;
+	overflow: hidden;
+}
+.form-style-7 input[type="text"],
+.form-style-7 input[type="date"],
+.form-style-7 input[type="datetime"],
+.form-style-7 input[type="email"],
+.form-style-7 input[type="number"],
+.form-style-7 input[type="search"],
+.form-style-7 input[type="time"],
+.form-style-7 input[type="url"],
+.form-style-7 input[type="password"],
+.form-style-7 textarea,
+.form-style-7 select 
+{
+	box-sizing: border-box;
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	width: 100%;
+	display: block;
+	outline: none;
+	border: none;
+	height: 25px;
+	line-height: 25px;
+	font-size: 16px;
+	padding: 0;
+}
+.form-style-7 input[type="text"]:focus,
+.form-style-7 input[type="date"]:focus,
+.form-style-7 input[type="datetime"]:focus,
+.form-style-7 input[type="email"]:focus,
+.form-style-7 input[type="number"]:focus,
+.form-style-7 input[type="search"]:focus,
+.form-style-7 input[type="time"]:focus,
+.form-style-7 input[type="url"]:focus,
+.form-style-7 input[type="password"]:focus,
+.form-style-7 textarea:focus,
+.form-style-7 select:focus 
+{
+}
+.form-style-7 li > span{
+	background: #F3F3F3;
+	display: block;
+	padding: 3px;
+	margin: 0 -9px -9px -9px;
+	text-align: center;
+	color: #C0C0C0;
+	font-size: 11px;
+}
+.form-style-7 textarea{
+	resize:none;
+}
+.form-style-7 input[type="submit"],
+.form-style-7 input[type="button"]{
+	background: #2471FF;
+	border: none;
+	padding: 10px 20px 10px 20px;
+	border-bottom: 3px solid #5994FF;
+	border-radius: 3px;
+	color: #D2E2FF;
+}
+.form-style-7 input[type="submit"]:hover,
+.form-style-7 input[type="button"]:hover{
+	background: #6B9FFF;
+	color:#fff;
+}
+</style>
+{% endblock style %}
+
+{% block body %}
+<form class="form-style-7" action="/api/PlaceOrder" method="post">
+<ul>
+<li>
+    <label for="orderId">주문번호</label>
+    <input type="text" name="orderId" maxlength="100">
+    <span>발급할 주문번호를 입력하세요. (eg: L-210425164101)</span>
+</li>
+<li>
+    <label for="ordername">상품명</label>
+    <input type="text" name="ordername" maxlength="100">
+    <span>주문의 상품명을 입력하세요. (eg: Nyancat: 이메일 서버 구축)</span>
+</li>
+<li>
+    <label for="description">주문설명</label>
+    <textarea name="description" onkeyup="adjust_textarea(this)"></textarea>
+    <span>주문의 설명, 상세 주문 내역등을 입력하세요. (eg: - 무슨비용 ~~₩)</span>
+</li>
+<li>
+    <label for="price">가격</label>
+    <input type="number" name="price" maxlength="100">
+    <span>주문의 가격을 KRW로 입력하세요. (eg: 43000)</span>
+</li>
+<li>
+    <label for="customer">고객명</label>
+    <input type="text" name="customer" maxlength="100">
+    <span>주문한 사람, 고객명을 입력하세요. (eg: 홍길동, LeoK Service)</span>
+</li>
+<li>
+    <input type="submit" value="등록하기" >
+</li>
+</ul>
+</form>
+{% endblock body %} 
+{% block script %}
+
+<script type="text/javascript">
+function adjust_textarea(h) {
+    h.style.height = "20px";
+    h.style.height = (h.scrollHeight)+"px";
+}
+</script>
+<!--script>
+function input_orderId(){
+  swal({
+  title: "주문번호를 입력해주세요",
+  icon: "info",
+  buttons: { confirm: "다음" },
+  content:{
+    element: "input",
+    attributes: {
+      placeholder: "L-210821022",
+      type: "text",
+    }
+  },
+  closeOnClickOutside: false,
+  closeOnEsc: false,
+}).then((input) => {
+  if (!input){
+    swal({
+    title: "주문번호를 입력하세요",
+    icon: "error",
+    closeOnClickOutside: false,
+    closeOnEsc: false
+    }).then((ok)=>{input_orderId();})
+    document.activeElement.blur()
+    return
+  }
+  $.post("/api/FindOrderData",{"orderId":input},function(data){
+  console.log(data)
+  if (!data.price){
+    swal({
+    title: "올바르지 않은 주문번호 입니다",
+    icon: "error",
+    closeOnClickOutside: false,
+    closeOnEsc: false
+    }).then((ok)=>{input_orderId();})
+    document.activeElement.blur()
+    return
+  }
+  swal({
+    title: "정보 확인",
+    icon: "info",
+    text: data.title+"\n\n"+data.description.split("\\n").join("\n"),
+    buttons: { confirm: "결제하기" },
+    closeOnClickOutside: false,
+    closeOnEsc: false
+  }).then((val) => {tosspay(data)});
+  return;
+  }
+  )
+});
+};
+input_orderId()
+</script-->
+{% endblock script %}

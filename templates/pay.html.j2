@@ -6,19 +6,7 @@
 <script src="https://js.tosspayments.com/v1"></script>
 {% endblock head %}
 
-{% block body %}
-<style>
-@font-face {
-    font-family: 'BMJUA';
-    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_one@1.0/BMJUA.woff') format('woff');
-    font-weight: normal;
-    font-style: normal;
-}
-body{
-    font-family: 'BMJUA';
-}
-</style>
-{% endblock body %} 
+{% block style %} {% endblock style %} 
 
 {% block script %}
 <script>
@@ -59,7 +47,7 @@ function input_orderId(){
   content:{
     element: "input",
     attributes: {
-      placeholder: "L-210821022",
+      placeholder: "L-190215225301",
       type: "text",
     }
   },
