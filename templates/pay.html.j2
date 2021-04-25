@@ -17,15 +17,6 @@
 body{
     font-family: 'BMJUA';
 }
-.my-validation-message::before {
-  display: none;
-}
-
-.my-validation-message i {
-  margin: 0 .4em;
-  color: #f27474;
-  font-size: 1.4em;
-}
 </style>
 {% endblock body %} 
 
@@ -81,21 +72,31 @@ function input_orderId(){
     icon: "error",
     closeOnClickOutside: false,
     closeOnEsc: false
-    }).then(function(ok){input_orderId()})
+    }).then((ok)=>{input_orderId();})
+    document.activeElement.blur()
     return
   }
   $.post("/api/FindOrderData",{"orderId":input},function(data){
   console.log(data)
   if (!data.price){
     swal({
-    title: "올바르지 않은 주문번호 입니다.",
+    title: "올바르지 않은 주문번호 입니다",
     icon: "error",
     closeOnClickOutside: false,
     closeOnEsc: false
-    }).then(function(ok){input_orderId();})
+    }).then((ok)=>{input_orderId();})
+    document.activeElement.blur()
     return
   }
-  tosspay(data)
+  swal({
+    title: "정보 확인",
+    icon: "info",
+    text: data.title+"\n\n"+data.description.split("\\n").join("\n"),
+    buttons: { confirm: "결제하기" },
+    closeOnClickOutside: false,
+    closeOnEsc: false
+  }).then((val) => {tosspay(data)});
+  return;
   }
   )
 });
