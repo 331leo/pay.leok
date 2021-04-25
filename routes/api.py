@@ -4,6 +4,8 @@ from typing import Optional
 from fastapi import APIRouter, Request, exceptions, status, Form, Depends, HTTPException
 from fastapi.responses import RedirectResponse, JSONResponse
 from fastapi.security import HTTPBasic, HTTPBasicCredentials
+from fastapi.templating import Jinja2Templates
+
 
 from base64 import b64encode
 
@@ -18,6 +20,8 @@ from utils.database import (
 )
 
 router = APIRouter()
+
+templates = Jinja2Templates(directory="templates")
 
 security = HTTPBasic()
 
@@ -55,10 +59,16 @@ async def route_placeorder(
             "customer": customer,
         }
         await insert_order_data(payload)
-        payload.pop("_id", None)
-        return JSONResponse(
-            payload, 200, headers={"content-type": "text/html; charset=UTF-8"}
+        return templates.TemplateResponse(
+            "notify.html.j2",
+            {
+                "request": request,
+                "data": payload,
+                "swal_title": "주문번호 생성이 완료되었습니다!",
+                "footer": f"주문번호: {orderId}",
+            },
         )
+
     except Exception as e:
         return JSONResponse(
             {"error": f"{e}"}, 500, headers={"content-type": "text/html; charset=UTF-8"}

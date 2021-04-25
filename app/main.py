@@ -53,7 +53,13 @@ async def route_paid(request: Request, objId: str):
     except:
         data = None
     return templates.TemplateResponse(
-        "paid.html.j2", {"request": request, "data": data}
+        "notify.html.j2",
+        {
+            "request": request,
+            "data": data,
+            "swal_title": "결제가 완료되었습니다!",
+            "footer": "감사합니다.",
+        },
     )
 
 

@@ -6,11 +6,9 @@
 
 {% block script %}
 <script>
-const el = document.createElement('div')
-el.innerHTML = `<a href="{{data.get('card').get('receiptUrl')}}">영수증</a>`
 swal({
-      title: "결제가 완료되었습니다!",
-      text: `{{data.title}}\n\n{{data.description}}\n\n감사합니다`,
+      title: "{{swal_title}}",
+      text: `{{data.title}}\n\n{{data.description}}\n\n{{footer}}`,
       icon: "success",
       buttons: { confirm: "나가기" },
       closeOnClickOutside: false,
