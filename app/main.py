@@ -6,6 +6,7 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from fastapi.security import HTTPBasic, HTTPBasicCredentials
 from bson import ObjectId
+from starlette.responses import RedirectResponse
 from utils import database
 from routes import router_api
 
@@ -19,7 +20,7 @@ security = HTTPBasic()
 
 @app.get("/")
 async def route_root(request: Request):
-    return {"ok": "OK"}
+    return RedirectResponse("/pay")
 
 
 @app.get("/pay", response_class=HTMLResponse)
