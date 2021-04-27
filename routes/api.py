@@ -35,11 +35,12 @@ async def on_startup():
 async def route_placeorder(
     request: Request,
     credentials: HTTPBasicCredentials = Depends(security),
-    orderId: str = Form("orderId"),
-    ordername: str = Form("ordername"),
-    description: str = Form("description"),
-    price: int = Form("price"),
-    customer: str = Form("customer"),
+    orderId: str = Form(None),
+    ordername: str = Form(None),
+    description: str = Form(None),
+    price: int = Form(None),
+    customer: str = Form(None),
+    email: Optional[str] = Form(None),
 ):
     if not (
         credentials.username == "admin"
@@ -57,6 +58,7 @@ async def route_placeorder(
             "description": description,
             "price": price,
             "customer": customer,
+            "email": email,
         }
         await insert_order_data(payload)
         return templates.TemplateResponse(
