@@ -45,7 +45,11 @@ async def route_placeorder(
     aftercomplete: Optional[str] = Form("/"),
     htmlresponse: Optional[str] = Form("False"),
 ):
-    htmlresponse = True if htmlresponse == "True" else htmlresponse = False
+    if htmlresponse == "True":
+        htmlresponse = True
+    else:
+        htmlresponse = False
+
     if not (
         credentials.username == "admin"
         and credentials.password == os.environ.get("PSTP-ADMIN-PASSWORD")
