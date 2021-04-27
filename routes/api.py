@@ -43,7 +43,9 @@ async def route_placeorder(
     email: Optional[str] = Form(None),
     specialcallback: Optional[str] = Form(None),
     aftercomplete: Optional[str] = Form("/"),
+    htmlresponse: Optional[str] = Form("False"),
 ):
+    htmlresponse = True if htmlresponse == "True" else htmlresponse = False
     if not (
         credentials.username == "admin"
         and credentials.password == os.environ.get("PSTP-ADMIN-PASSWORD")
@@ -65,15 +67,19 @@ async def route_placeorder(
             "aftercomplete": aftercomplete,
         }
         await insert_order_data(payload)
-        return templates.TemplateResponse(
-            "notify.html.j2",
-            {
-                "request": request,
-                "data": payload,
-                "swal_title": "주문번호 생성이 완료되었습니다!",
-                "footer": f"주문번호: {orderId}",
-            },
-        )
+        if htmlresponse:
+            return templates.TemplateResponse(
+                "notify.html.j2",
+                {
+                    "request": request,
+                    "data": payload,
+                    "swal_title": "주문번호 생성이 완료되었습니다!",
+                    "footer": f"주문번호: {orderId}",
+                },
+            )
+        else:
+            payload.update({"orderId": orderId, "_id": None})
+            return payload
 
     except Exception as e:
         return JSONResponse(
