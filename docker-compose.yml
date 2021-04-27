@@ -1,0 +1,12 @@
+version: "3"
+
+services:
+  webapi:
+    build:
+      context: .
+      dockerfile: ./dockerfile
+    network_mode: bridge
+    external_links:
+      - mongo:mongo
+    ports:
+      - 32769:8000
