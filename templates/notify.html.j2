@@ -10,11 +10,11 @@ swal({
       title: "{{swal_title}}",
       text: `{{data.title}}\n\n{{data.description}}\n\n{{footer}}`,
       icon: "success",
-      buttons: { confirm: "나가기" },
+      buttons: { confirm: "돌아가기" },
       closeOnClickOutside: false,
       closeOnEsc: false,
     }).then((YES) => {
-      location.href="about:blank";
+      location.href="{{data.aftercomplete}}";
     });
 </script>
 {% endblock script %}

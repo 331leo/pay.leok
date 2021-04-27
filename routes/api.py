@@ -41,6 +41,8 @@ async def route_placeorder(
     price: int = Form(None),
     customer: str = Form(None),
     email: Optional[str] = Form(None),
+    specialcallback: Optional[str] = Form(None),
+    aftercomplete: Optional[str] = Form("/"),
 ):
     if not (
         credentials.username == "admin"
@@ -59,6 +61,8 @@ async def route_placeorder(
             "price": price,
             "customer": customer,
             "email": email,
+            "specialcallback": specialcallback,
+            "aftercomplete": aftercomplete,
         }
         await insert_order_data(payload)
         return templates.TemplateResponse(
@@ -110,6 +114,12 @@ async def route_paycallback(
                 json.update(order_data)
                 inserted_id = str((await insert_paid_data(json)).inserted_id)
                 await delete_order_data({"orderId": orderId})
+                if order_data.get("specialcallback", None):
+                    async with session.post(
+                        order_data.get("specialcallback", None), json=json
+                    ):
+                        specialreturn = await res.json()
+                        json.update(specialreturn)
                 return RedirectResponse(f"/paid/{inserted_id}")
             else:
                 return {
