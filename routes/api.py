@@ -124,12 +124,13 @@ async def route_paycallback(
                 json.update(order_data)
                 inserted_id = str((await insert_paid_data(json)).inserted_id)
                 await delete_order_data({"orderId": orderId})
+
                 if order_data.get("specialcallback", None):
                     json.update(
                         {"auth": os.environ.get("PSTP-ADMIN-PASSWORD"), "_id": None}
                     )
                     async with session.post(
-                        order_data.get("specialcallback", None), json=json
+                        order_data.get("specialcallback", None), data=json
                     ):
                         await res.json()
                 return RedirectResponse(f"/paid/{inserted_id}")
