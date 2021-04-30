@@ -82,7 +82,7 @@ async def route_placeorder(
                 },
             )
         else:
-            payload.update({"orderId": orderId, "_id": None})
+            payload.update({"_id": None})
             return payload
 
     except Exception as e:
@@ -125,11 +125,13 @@ async def route_paycallback(
                 inserted_id = str((await insert_paid_data(json)).inserted_id)
                 await delete_order_data({"orderId": orderId})
                 if order_data.get("specialcallback", None):
+                    json.update(
+                        {"auth": os.environ.get("PSTP-ADMIN-PASSWORD"), "_id": None}
+                    )
                     async with session.post(
                         order_data.get("specialcallback", None), json=json
                     ):
-                        specialreturn = await res.json()
-                        json.update(specialreturn)
+                        await res.json()
                 return RedirectResponse(f"/paid/{inserted_id}")
             else:
                 return {
